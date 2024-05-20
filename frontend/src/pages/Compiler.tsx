@@ -1,4 +1,5 @@
 import CodeEditor from "@/components/CodeEditor";
+import HelperHeader from "@/components/HelperHeader";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 export default function Compiler ()  {
@@ -12,6 +13,7 @@ export default function Compiler ()  {
       defaultSize={50}
       className="h-[500px]"
     >
+      <HelperHeader/>
       <CodeEditor/>
     </ResizablePanel>
     <ResizableHandle />
