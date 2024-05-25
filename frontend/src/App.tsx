@@ -14,7 +14,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/compile" element={<Compiler />} />
+          <Route path="/compiler" element={<Compiler />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Button>test</Button>
