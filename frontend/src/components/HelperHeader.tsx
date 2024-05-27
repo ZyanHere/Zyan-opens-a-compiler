@@ -1,5 +1,6 @@
 import { Share2Icon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
+import { Code, Copy, Save } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -7,6 +8,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   CompilerSliceStateType,
@@ -17,10 +27,11 @@ import { handleError } from "@/utils/handleErrors";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function HelperHeader() {
-  const [saveLoading, setSavaLoading] = useState<boolean>(false)
-  const navigate = useNavigate()
+  const [saveLoading, setSavaLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const fullCode = useSelector(
     (state: RootState) => state.compilerSlice.fullCode
   );
@@ -31,11 +42,11 @@ export default function HelperHeader() {
         fullCode: fullCode,
       });
       console.log(response.data);
-      navigate(`/compiler/${response.data.url}`, {replace:true})
+      navigate(`/compiler/${response.data.url}`, { replace: true });
     } catch (error) {
       handleError(error);
-    }finally{
-      setSavaLoading(false)
+    } finally {
+      setSavaLoading(false);
     }
   };
   const dispatch = useDispatch();
@@ -49,14 +60,44 @@ export default function HelperHeader() {
           onClick={handleSaveCode}
           variant="success"
           className="flex justify-center items-center gap-1"
-          disabled = {saveLoading}
+          disabled={saveLoading}
         >
-          {/* <Save size={16}/> */}
-          {saveLoading? "Saving..." : "Save"}
+          <Save />
+          {saveLoading ? "Saving..." : "Save"}
         </Button>
-        <Button variant="secondary">
-          <Share2Icon fontSize={16} /> Share
-        </Button>
+        <Dialog>
+          <DialogTrigger className="whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 flex justify-center items-center gap-1">
+            <Share2Icon fontSize={16} /> Share
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex gap-1 justify-center items-center"><Code/>Share your code</DialogTitle>
+              <DialogDescription className="flex flex-col gap-2">
+              <input
+                      type="text"
+                      disabled
+                      className="w-full p-2 rounded bg-slate-800 text-slate-400 select-none"
+                      value={window.location.href}
+                    />
+                     <Button
+                      variant="outline"
+                      className="h-full"
+                      onClick={() => {
+                        window.navigator.clipboard.writeText(
+                          window.location.href
+                        );
+                        toast("URL Copied to your clipboard!");
+                      }}
+                    >
+                      <Copy size={14} />
+                    </Button>
+              <p className="text-center text-slate-400 text-xs">
+                    Share this URL with your friends to collaborate.
+                  </p>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="__tab_switcher flex justify-center items-center gap-1">
         <Select
