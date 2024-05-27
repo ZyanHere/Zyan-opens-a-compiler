@@ -2,10 +2,12 @@ import CodeEditor from "@/components/CodeEditor";
 import HelperHeader from "@/components/HelperHeader";
 import RenderCode from "@/components/RenderCode";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { useParams } from "react-router-dom";
 
 
 export default function Compiler ()  {
-  
+  const {urlId} = useParams()
+  console.log(urlId) 
   return (
     <ResizablePanelGroup
     direction="horizontal"
