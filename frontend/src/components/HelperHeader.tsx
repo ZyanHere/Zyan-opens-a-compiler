@@ -16,13 +16,16 @@ import { RootState } from "@/redux/store";
 import { handleError } from "@/utils/handleErrors";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function HelperHeader() {
+  const [saveLoading, setSavaLoading] = useState<boolean>(false)
   const navigate = useNavigate()
   const fullCode = useSelector(
     (state: RootState) => state.compilerSlice.fullCode
   );
   const handleSaveCode = async () => {
+    setSavaLoading(true);
     try {
       const response = await axios.post("http://localhost:4000/compiler/save", {
         fullCode: fullCode,
@@ -31,6 +34,8 @@ export default function HelperHeader() {
       navigate(`/compiler/${response.data.url}`, {replace:true})
     } catch (error) {
       handleError(error);
+    }finally{
+      setSavaLoading(false)
     }
   };
   const dispatch = useDispatch();
@@ -44,9 +49,10 @@ export default function HelperHeader() {
           onClick={handleSaveCode}
           variant="success"
           className="flex justify-center items-center gap-1"
+          disabled = {saveLoading}
         >
           {/* <Save size={16}/> */}
-          Save
+          {saveLoading? "Saving..." : "Save"}
         </Button>
         <Button variant="secondary">
           <Share2Icon fontSize={16} /> Share
