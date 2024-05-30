@@ -8,7 +8,10 @@ export const api = createApi({
   }),
   tagTypes: ["myCodes", "allCodes"],
   endpoints: (builder) => ({
-    saveCode: builder.mutation<{ url: string; status: string }, CompilerSliceStateType["fullCode"]>({
+    saveCode: builder.mutation<
+      { url: string; status: string },
+      CompilerSliceStateType["fullCode"]
+    >({
       query: (fullCode) => {
         return {
           url: "/compiler/save",
@@ -17,7 +20,17 @@ export const api = createApi({
         };
       },
     }),
+    loadCode: builder.mutation<
+      { fullCode: CompilerSliceStateType["fullCode"] },
+      { urlId: string }
+    >({
+      query: (body) => ({
+        url: "/compiler/load",
+        method: "POST",
+        body: body,
+      }),
+    }),
   }),
 });
 
-export const {useSaveCodeMutation} = api;
+export const { useSaveCodeMutation,useLoadCodeMutation } = api;

@@ -24,18 +24,19 @@ import {
 } from "@/redux/slices/compilerSlice";
 import { RootState } from "@/redux/store";
 import { handleError } from "@/utils/handleErrors";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useSaveCodeMutation } from "@/redux/slices/api";
 
 export default function HelperHeader() {
-  const [saveLoading, setSavaLoading] = useState<boolean>(false);
   const [shareBtn, setShareBtn] = useState<boolean>(false);
   const navigate = useNavigate();
   const fullCode = useSelector(
     (state: RootState) => state.compilerSlice.fullCode
   );
+  const [saveCode, { isLoading }] = useSaveCodeMutation();
+  
 
   const { urlId } = useParams();
   useEffect(() => {
@@ -47,18 +48,13 @@ export default function HelperHeader() {
   }, [urlId]);
 
   const handleSaveCode = async () => {
-    setSavaLoading(true);
     try {
-      const response = await axios.post("http://localhost:4000/compiler/save", {
-        fullCode: fullCode,
-      });
-      console.log(response.data);
-      navigate(`/compiler/${response.data.url}`, { replace: true });
+      
+      const response = await saveCode(fullCode).unwrap();
+      navigate(`/compiler/${response.url}`, { replace: true });
     } catch (error) {
       handleError(error);
-    } finally {
-      setSavaLoading(false);
-    }
+    } 
   };
   const dispatch = useDispatch();
   const currrentLanguage = useSelector(
@@ -71,10 +67,10 @@ export default function HelperHeader() {
           onClick={handleSaveCode}
           variant="success"
           className="flex justify-center items-center gap-1"
-          disabled={saveLoading}
+          disabled={isLoading}
         >
           <Save />
-          {saveLoading ? "Saving..." : "Save"}
+          {isLoading ? "Saving..." : "Save"}
         </Button>
         {shareBtn && (
           <Dialog>
