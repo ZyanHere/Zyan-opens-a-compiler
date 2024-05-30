@@ -39,7 +39,13 @@ export const api = createApi({
         credentials: "include",
       }),
     }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "/user/logout",
+        method: "POST",
+      }),
+    }),
   }),
 });
 
-export const { useSaveCodeMutation,useLoadCodeMutation,useLoginMutation } = api;
+export const { useSaveCodeMutation,useLoadCodeMutation,useLoginMutation,useLogoutMutation } = api;

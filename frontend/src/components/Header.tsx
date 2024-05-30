@@ -1,7 +1,27 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice";
+import { handleError } from "@/utils/handleErrors";
+import { useLogoutMutation } from "@/redux/slices/api";
 
 export default function Header() {
+  const [logout, { isLoading }] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const isLoggedIn = -useSelector(
+    (state: RootState) => state.appSlice.isLoggedIn
+  );
+
+  async function handleLogout() {
+    try {
+      await logout().unwrap();
+      dispatch(updateIsLoggedIn(false));
+      dispatch(updateCurrentUser({}));
+    } catch (error) {
+      handleError(error);
+    }
+  }
   return (
     <nav className="w-full h-[60px] bg-gray-900 text-white p-3 flex justify-between items-center">
       <Link to="/">
@@ -13,7 +33,21 @@ export default function Header() {
             <Button variant="link">Compiler</Button>
           </Link>
         </li>
-        <li>
+        {isLoggedIn ? (
+          <>
+          <li>
+          <Button
+                  loading={isLoading}
+                  onClick={handleLogout}
+                  variant="destructive"
+                >
+                  Logout
+                </Button>
+          </li>
+          </>
+        ) : (
+          <>
+          <li>
           <Link to="/login">
             <Button variant="blue">Login</Button>
           </Link>
@@ -22,7 +56,9 @@ export default function Header() {
           <Link to="/signup">
             <Button variant="blue">SignUp</Button>
           </Link>
-        </li>
+        </li></>
+        )}
+        
       </ul>
     </nav>
   );
