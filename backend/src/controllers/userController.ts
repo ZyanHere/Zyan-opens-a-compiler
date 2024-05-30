@@ -71,7 +71,12 @@ export const signup = async (req: Request, res: Response) => {
         sameSite: "lax",
       });
   
-      return res.status(200).send({ existingUser, jwtToken });
+      return res.status(200).send({
+        username: existingUser.username,
+        picture: existingUser.picture,
+        email: existingUser.email,
+        savedCodes: existingUser.savedCodes,
+      });
     } catch (error) {
       return res.status(500).send({ message: "Error log in!", error: error });
     }
