@@ -10,7 +10,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useSignupMutation } from "@/redux/slices/api";
+import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice";
+import { handleError } from "@/utils/handleErrors";
 
 
 const formSchema = z.object({
@@ -20,7 +24,10 @@ const formSchema = z.object({
 });
 
 export default function Signup() {
- 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [signup, { isLoading }] = useSignupMutation();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,7 +38,14 @@ export default function Signup() {
   });
 
   async function handleSignup(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    try {
+      const response = await signup(values).unwrap();
+      dispatch(updateCurrentUser(response));
+      dispatch(updateIsLoggedIn(true));
+      navigate("/");
+    } catch (error) {
+      handleError(error);
+    }
   }
 
 
@@ -56,6 +70,7 @@ export default function Signup() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      disabled={isLoading}
                       placeholder="Username"
                       {...field}
                     />
@@ -71,6 +86,7 @@ export default function Signup() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      disabled={isLoading}
                       type="email"
                       placeholder="Email"
                       {...field}
@@ -87,6 +103,7 @@ export default function Signup() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      disabled={isLoading}
                       type="password"
                       placeholder="Password"
                       {...field}
@@ -96,7 +113,7 @@ export default function Signup() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
+            <Button loading={isLoading} className="w-full" type="submit">
               Signup
             </Button>
           </form>
