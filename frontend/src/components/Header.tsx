@@ -37,40 +37,50 @@ export default function Header() {
             <Button variant="link">Compiler</Button>
           </Link>
         </li>
+        <li>
+          <Link to="/all-codes">
+            <Button variant="link">All Codes</Button>
+          </Link>
+        </li>
         {isLoggedIn ? (
           <>
-          <li>
-          <Button
-                  loading={isLoading}
-                  onClick={handleLogout}
-                  variant="destructive"
-                >
-                  Logout
-                </Button>
-          </li>
-          <li>
-                <Avatar>
-                  <AvatarImage src={currentUser.picture} />
-                  <AvatarFallback className="capitalize">
-                    {currentUser.username?.slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-              </li>
+            <li>
+              <Link to="/my-codes">
+                <Button variant="blue">My Codes</Button>
+              </Link>
+            </li>
+            <li>
+              <Button
+                loading={isLoading}
+                onClick={handleLogout}
+                variant="destructive"
+              >
+                Logout
+              </Button>
+            </li>
+            <li>
+              <Avatar>
+                <AvatarImage src={currentUser.picture} />
+                <AvatarFallback className="capitalize">
+                  {currentUser.username?.slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
+            </li>
           </>
         ) : (
           <>
-          <li>
-          <Link to="/login">
-            <Button variant="blue">Login</Button>
-          </Link>
-        </li>
-        <li>
-          <Link to="/signup">
-            <Button variant="blue">SignUp</Button>
-          </Link>
-        </li></>
+            <li>
+              <Link to="/login">
+                <Button variant="blue">Login</Button>
+              </Link>
+            </li>
+            <li>
+              <Link to="/signup">
+                <Button variant="blue">SignUp</Button>
+              </Link>
+            </li>
+          </>
         )}
-        
       </ul>
     </nav>
   );
