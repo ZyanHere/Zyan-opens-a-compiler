@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { CompilerSliceStateType } from "./compilerSlice";
 import {
+  codeType,
   loginCredentialsType,
   signupCredentialsType,
   userInfoType,
@@ -13,10 +14,7 @@ export const api = createApi({
   }),
   tagTypes: ["myCodes", "allCodes"],
   endpoints: (builder) => ({
-    saveCode: builder.mutation<
-      { url: string; status: string },
-      CompilerSliceStateType["fullCode"]
-    >({
+    saveCode: builder.mutation<{ url: string; status: string }, codeType>({
       query: (fullCode) => {
         return {
           url: "/compiler/save",
@@ -24,6 +22,7 @@ export const api = createApi({
           body: fullCode,
         };
       },
+      invalidatesTags: ["myCodes", "allCodes"],
     }),
     loadCode: builder.mutation<
       { fullCode: CompilerSliceStateType["fullCode"] },

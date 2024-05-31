@@ -27,9 +27,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useSaveCodeMutation } from "@/redux/slices/api";
+import { Input } from "./ui/input";
 
 export default function HelperHeader() {
   const [shareBtn, setShareBtn] = useState<boolean>(false);
+  const [postTitle, setPostTitle] = useState<string>("My Code");
+
   const navigate = useNavigate();
   const fullCode = useSelector(
     (state: RootState) => state.compilerSlice.fullCode
@@ -94,13 +97,15 @@ export default function HelperHeader() {
   }, [urlId]);
 
   const handleSaveCode = async () => {
+    const body = { fullCode: fullCode, title: postTitle };
     try {
-      const response = await saveCode(fullCode).unwrap();
+      const response = await saveCode(body).unwrap();
       navigate(`/compiler/${response.url}`, { replace: true });
     } catch (error) {
       handleError(error);
     }
   };
+  
   const dispatch = useDispatch();
   const currrentLanguage = useSelector(
     (state: RootState) => state.compilerSlice.currentLanguage
@@ -108,15 +113,36 @@ export default function HelperHeader() {
   return (
     <div className="__helper_header h-[50px] bg-black text-white p-2 flex justify-between items-center">
       <div className="__btn_container flex gap-1">
-        <Button
-          onClick={handleSaveCode}
-          variant="success"
-          className="flex justify-center items-center gap-1"
-          disabled={isLoading}
-        >
-          <Save />
-          {isLoading ? "Saving..." : "Save"}
-        </Button>
+      <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="success" size="icon" loading={isLoading}>
+              <Save size={16} />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex gap-1 justify-center items-center">
+                <Code />
+                Save your Code!
+              </DialogTitle>
+              <div className="__url flex justify-center items-center gap-1">
+                <Input
+                  className="bg-slate-700 focus-visible:ring-0"
+                  placeholder="Type your Post title"
+                  value={postTitle}
+                  onChange={(e) => setPostTitle(e.target.value)}
+                />
+                <Button
+                  variant="success"
+                  className="h-full"
+                  onClick={handleSaveCode}
+                >
+                  Save
+                </Button>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
         <Button onClick={handleDownloadCode} size="icon" variant="blue">
           <Download size={16} />
         </Button>
