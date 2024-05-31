@@ -1,6 +1,5 @@
-import { Share2Icon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
-import { Code, Copy, Save } from "lucide-react";
+import { Code, Copy, Save, Share2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -74,8 +73,8 @@ export default function HelperHeader() {
         </Button>
         {shareBtn && (
           <Dialog>
-            <DialogTrigger className="whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 flex justify-center items-center gap-1">
-              <Share2Icon fontSize={16} /> Share
+            <DialogTrigger >
+              <Share2 fontSize={16} /> 
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
