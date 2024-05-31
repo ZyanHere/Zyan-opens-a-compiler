@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { Code, Copy, Download, Save, Share2 } from "lucide-react";
+import { Code, Copy, Download, PencilLine, Save, Share2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,7 +10,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -26,10 +25,13 @@ import { handleError } from "@/utils/handleErrors";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSaveCodeMutation } from "@/redux/slices/api";
+import { useEditCodeMutation, useSaveCodeMutation } from "@/redux/slices/api";
 import { Input } from "./ui/input";
 
 export default function HelperHeader() {
+  const isOwner = useSelector(
+    (state: RootState) => state.compilerSlice.isOwner
+  );
   const [shareBtn, setShareBtn] = useState<boolean>(false);
   const [postTitle, setPostTitle] = useState<string>("My Code");
 
@@ -38,6 +40,7 @@ export default function HelperHeader() {
     (state: RootState) => state.compilerSlice.fullCode
   );
   const [saveCode, { isLoading }] = useSaveCodeMutation();
+  const [editCode, { isLoading: codeEditLoading }] = useEditCodeMutation();
 
   const handleDownloadCode = () => {
     if (
@@ -105,7 +108,18 @@ export default function HelperHeader() {
       handleError(error);
     }
   };
-  
+
+  const handleEditCode = async () => {
+    try {
+      if (urlId) {
+        await editCode({ fullCode, id: urlId }).unwrap();
+        toast("Code Updated Successully!");
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const dispatch = useDispatch();
   const currrentLanguage = useSelector(
     (state: RootState) => state.compilerSlice.currentLanguage
@@ -113,7 +127,7 @@ export default function HelperHeader() {
   return (
     <div className="__helper_header h-[50px] bg-black text-white p-2 flex justify-between items-center">
       <div className="__btn_container flex gap-1">
-      <Dialog>
+        <Dialog>
           <DialogTrigger asChild>
             <Button variant="success" size="icon" loading={isLoading}>
               <Save size={16} />
@@ -146,43 +160,58 @@ export default function HelperHeader() {
         <Button onClick={handleDownloadCode} size="icon" variant="blue">
           <Download size={16} />
         </Button>
+
         {shareBtn && (
-          <Dialog>
-            <DialogTrigger>
-              <Share2 fontSize={16} />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="flex gap-1 justify-center items-center">
-                  <Code />
-                  Share your code
-                </DialogTitle>
-                <DialogDescription className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    disabled
-                    className="w-full p-2 rounded bg-slate-800 text-slate-400 select-none"
-                    value={window.location.href}
-                  />
-                  <Button
-                    variant="outline"
-                    className="h-full"
-                    onClick={() => {
-                      window.navigator.clipboard.writeText(
-                        window.location.href
-                      );
-                      toast("URL Copied to your clipboard!");
-                    }}
-                  >
-                    <Copy size={14} />
-                  </Button>
+          <>
+            {isOwner && (
+              <Button
+                loading={codeEditLoading}
+                onClick={handleEditCode}
+                variant="blue"
+              >
+                <PencilLine size={16} />
+                Edit
+              </Button>
+            )}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="icon" variant="secondary">
+                  <Share2 size={16} />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex gap-1 justify-center items-center">
+                    <Code />
+                    Share your Code!
+                  </DialogTitle>
+                  <div className="__url flex justify-center items-center gap-1">
+                    <input
+                      type="text"
+                      disabled
+                      className="w-full p-2 rounded bg-slate-800 text-slate-400 select-none"
+                      value={window.location.href}
+                    />
+                    <Button
+                      variant="outline"
+                      className="h-full"
+                      onClick={() => {
+                        window.navigator.clipboard.writeText(
+                          window.location.href
+                        );
+                        toast("URL Copied to your clipboard!");
+                      }}
+                    >
+                      <Copy size={14} />
+                    </Button>
+                  </div>
                   <p className="text-center text-slate-400 text-xs">
                     Share this URL with your friends to collaborate.
                   </p>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </>
         )}
       </div>
       <div className="__tab_switcher flex justify-center items-center gap-1">

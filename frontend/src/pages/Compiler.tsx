@@ -8,7 +8,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useLoadCodeMutation } from "@/redux/slices/api";
-import { updateFullCode } from "@/redux/slices/compilerSlice";
+import { updateFullCode, updateIsOwner } from "@/redux/slices/compilerSlice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -26,6 +26,7 @@ export default function Compiler() {
       if (urlId) {
         const response = await loadExistingCode({ urlId }).unwrap();
         dispatch(updateFullCode(response.fullCode));
+        dispatch(updateIsOwner(response.isOwner));
       }
     } catch (error) {
       handleError(error);
