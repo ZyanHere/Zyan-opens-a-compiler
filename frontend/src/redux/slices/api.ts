@@ -25,7 +25,7 @@ export const api = createApi({
       invalidatesTags: ["myCodes", "allCodes"],
     }),
     loadCode: builder.mutation<
-      { fullCode: CompilerSliceStateType["fullCode"] },
+      { fullCode: CompilerSliceStateType["fullCode"]; isOwner: boolean },
       { urlId: string }
     >({
       query: (body) => ({
@@ -42,12 +42,6 @@ export const api = createApi({
         credentials: "include",
       }),
     }),
-    logout: builder.mutation<void, void>({
-      query: () => ({
-        url: "/user/logout",
-        method: "POST",
-      }),
-    }),
     signup: builder.mutation<userInfoType, signupCredentialsType>({
       query: (body) => ({
         url: "/user/signup",
@@ -55,8 +49,18 @@ export const api = createApi({
         body: body,
       }),
     }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "/user/logout",
+        method: "POST",
+      }),
+    }),
     getUserDetails: builder.query<userInfoType, void>({
       query: () => ({ url: "/user/user-details", cache: "no-store" }),
+    }),
+    getMyCodes: builder.query<Array<codeType>, void>({
+      query: () => "/user/my-codes",
+      providesTags: ["myCodes"],
     }),
   }),
 });
@@ -68,4 +72,5 @@ export const {
   useLogoutMutation,
   useGetUserDetailsQuery,
   useSignupMutation,
+  useGetMyCodesQuery
 } = api;
