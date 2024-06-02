@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { Code } from "../models/Code";
-import { fullCodeType } from "../types/compilerTypes";
-import { User } from "../models/User";
+import { fullCodeType } from "../src/types/compilerTypes";
 import { AuthRequest } from "../middlewares/verifyToken";
+import { User } from "../models/User";
 
 export const saveCode = async (req: AuthRequest, res: Response) => {
   const { fullCode, title }: { fullCode: fullCodeType; title: string } =
     req.body;
-
   let ownerName = "Anonymous";
   let user = undefined;
   let ownerInfo = undefined;
