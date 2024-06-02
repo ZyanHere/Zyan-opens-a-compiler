@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { Code } from "../models/Code";
 import { fullCodeType } from "../src/types/compilerTypes";
 import { AuthRequest } from "../middlewares/verifyToken";
 import { User } from "../models/User";
+import { Code }from "../models/Code";
+
 
 export const saveCode = async (req: AuthRequest, res: Response) => {
   const { fullCode, title }: { fullCode: fullCodeType; title: string } =
